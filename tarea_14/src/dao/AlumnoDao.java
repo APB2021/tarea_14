@@ -1,0 +1,20 @@
+package dao;
+
+import java.sql.SQLException;
+import java.util.List;
+
+import model.Alumno;
+
+public interface AlumnoDao {
+
+	int add(Alumno alumno) throws SQLException;
+
+	Alumno getbyNia(int nia) throws SQLException;
+
+	List<Alumno> getAll() throws SQLException;
+
+	int update(int nia) throws SQLException;
+
+	void delete(int nia) throws SQLException;
+
+}

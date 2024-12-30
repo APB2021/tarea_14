@@ -1,7 +1,9 @@
-package tarea_14;
+package model;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Objects;
 
 public class Alumno implements Serializable {
 
@@ -9,25 +11,25 @@ public class Alumno implements Serializable {
 
 	// Atributos privados de la clase Alumno:
 
-	private int nia = 0;
+	private int nia;
 	private String nombre;
 	private String apellidos;
-	private char genero = 'S';
-	private Date fechaNacimiento;
+	private char genero;
+	private LocalDate fechaNacimiento;
 	private String ciclo;
 	private String curso;
 	// cambiamos el tipo de "grupo" desde String a la clase Grupo:
 	private Grupo grupo;
 
 	// Constructores de la clase Alumno:
-
+	// Constructor vacío:
 	public Alumno() {
 
 	}
 
-	public Alumno(int nia, String nombre, String apellidos, char genero, Date fechaNacimiento, String ciclo,
-			String curso, Grupo grupo) {
-		this.nia = nia;
+	// Constructor sin el nia:
+	public Alumno(String nombre, String apellidos, char genero, LocalDate fechaNacimiento, String ciclo, String curso,
+			Grupo grupo) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.genero = genero;
@@ -37,8 +39,10 @@ public class Alumno implements Serializable {
 		this.grupo = grupo;
 	}
 
-	public Alumno(String nombre, String apellidos, char genero, Date fechaNacimiento, String ciclo, String curso,
-			Grupo grupo) {
+	// Constructor con todos los atributos:
+	public Alumno(int nia, String nombre, String apellidos, char genero, LocalDate fechaNacimiento, String ciclo,
+			String curso, Grupo grupo) {
+		this.nia = nia;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.genero = genero;
@@ -82,11 +86,11 @@ public class Alumno implements Serializable {
 		this.genero = genero;
 	}
 
-	public Date getFechaNacimiento() {
+	public LocalDate getFechaNacimiento() {
 		return fechaNacimiento;
 	}
 
-	public void setFechaNacimiento(Date fechaNacimiento) {
+	public void setFechaNacimiento(LocalDate fechaNacimiento) {
 		this.fechaNacimiento = fechaNacimiento;
 	}
 
@@ -113,5 +117,34 @@ public class Alumno implements Serializable {
 	public void setGrupo(Grupo grupo) {
 		this.grupo = grupo;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(apellidos, ciclo, curso, fechaNacimiento, genero, grupo, nia, nombre);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Alumno other = (Alumno) obj;
+		return Objects.equals(apellidos, other.apellidos) && Objects.equals(ciclo, other.ciclo)
+				&& Objects.equals(curso, other.curso) && Objects.equals(fechaNacimiento, other.fechaNacimiento)
+				&& genero == other.genero && Objects.equals(grupo, other.grupo) && nia == other.nia
+				&& Objects.equals(nombre, other.nombre);
+	}
+
+	@Override
+	public String toString() {
+		return "Alumno [nia=" + nia + ", nombre=" + nombre + ", apellidos=" + apellidos + ", genero=" + genero
+				+ ", fechaNacimiento=" + fechaNacimiento + ", ciclo=" + ciclo + ", curso=" + curso + ", grupo=" + grupo
+				+ "]";
+	}
+	
+	
 
 }
