@@ -1,7 +1,6 @@
 package model;
 
 import java.io.Serializable;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Objects;
 
@@ -18,30 +17,29 @@ public class Alumno implements Serializable {
 	private LocalDate fechaNacimiento;
 	private String ciclo;
 	private String curso;
-	// cambiamos el tipo de "grupo" desde String a la clase Grupo:
-	private Grupo grupo;
+	private String grupo;
 
 	// Constructores de la clase Alumno:
+
 	// Constructor vacío:
 	public Alumno() {
 
 	}
 
-	// Constructor sin el nia:
-	public Alumno(String nombre, String apellidos, char genero, LocalDate fechaNacimiento, String ciclo, String curso,
-			Grupo grupo) {
+	// Constructor sin el nia ni el grupo:
+	public Alumno(String nombre, String apellidos, char genero, LocalDate fechaNacimiento, String ciclo, String curso) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.genero = genero;
 		this.fechaNacimiento = fechaNacimiento;
 		this.ciclo = ciclo;
 		this.curso = curso;
-		this.grupo = grupo;
+
 	}
 
 	// Constructor con todos los atributos:
 	public Alumno(int nia, String nombre, String apellidos, char genero, LocalDate fechaNacimiento, String ciclo,
-			String curso, Grupo grupo) {
+			String curso, String grupo) {
 		this.nia = nia;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -110,11 +108,11 @@ public class Alumno implements Serializable {
 		this.curso = curso;
 	}
 
-	public Grupo getGrupo() {
+	public String getGrupo() {
 		return grupo;
 	}
 
-	public void setGrupo(Grupo grupo) {
+	public void setGrupo(String grupo) {
 		this.grupo = grupo;
 	}
 
@@ -144,7 +142,5 @@ public class Alumno implements Serializable {
 				+ ", fechaNacimiento=" + fechaNacimiento + ", ciclo=" + ciclo + ", curso=" + curso + ", grupo=" + grupo
 				+ "]";
 	}
-	
-	
 
 }
