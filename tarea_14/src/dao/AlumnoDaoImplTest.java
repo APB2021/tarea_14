@@ -1,6 +1,8 @@
 package dao;
 
+import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -103,4 +105,30 @@ public class AlumnoDaoImplTest {
 			e.printStackTrace();
 		}
 	}
+	
+	@Test
+	void testGetByNia() {
+	    try {
+	        // Busca un alumno con un NIA conocido.
+	        Alumno alumno = alumnoDao.getByNia(1);
+
+	        // Comprueba que no sea nulo.
+	        assertNotNull(alumno, "El alumno con NIA 1 no debe ser nulo.");
+
+	        // Verifica que los datos coincidan.
+	        assertEquals(1, alumno.getNia(), "El NIA del alumno debe ser 1.");
+	        assertEquals("MARÍA", alumno.getNombre(), "El nombre del alumno debe ser MARÍA.");
+	        assertEquals("OLALLA GARCÍA", alumno.getApellidos(), "Los apellidos deben ser OLALLA GARCÍA.");
+	        assertEquals('F', alumno.getGenero(), "El género debe ser F.");
+	        assertEquals(1979, alumno.getFechaNacimiento().getYear(), "El año de nacimiento debe ser 1979.");
+	        assertEquals("PEDAGOGÍA TERAPEUTICA", alumno.getCiclo(),
+					"El ciclo de MARÍA debe ser PEDAGOGÍA TERAPEUTICA");
+			assertEquals("2º", alumno.getCurso(), "El curso de MARÍA debe ser 2º");
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        fail("No se esperaba ninguna excepción.");
+	    }
+	}
+
 }

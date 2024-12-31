@@ -56,9 +56,36 @@ public class AlumnoDaoImpl implements AlumnoDao {
 	}
 
 	@Override
-	public Alumno getbyNia(int nia) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+	public Alumno getByNia(int nia) throws SQLException {
+
+		Alumno result = null;
+
+		String sql = """
+				SELECT nia, nombre, apellidos, genero, fechaNacimiento, ciclo, curso, numeroGrupo
+				FROM alumnos
+				WHERE nia = ?;
+				""";
+
+		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+			pstm.setInt(1, nia);
+
+			try (ResultSet rs = pstm.executeQuery()) {
+				if (rs.next()) { // Solo esperamos un registro, así que usamos `if` en lugar de `while`.
+					result = new Alumno();
+					result.setNia(rs.getInt("nia"));
+					result.setNombre(rs.getString("nombre"));
+					result.setApellidos(rs.getString("apellidos"));
+					result.setGenero(rs.getString("genero").charAt(0));
+					result.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
+					result.setCiclo(rs.getString("ciclo"));
+					result.setCurso(rs.getString("curso"));
+					result.setGrupo(rs.getString("numeroGrupo"));
+				}
+			}
+		}
+
+		return result;
 	}
 
 	@Override
@@ -87,8 +114,9 @@ public class AlumnoDaoImpl implements AlumnoDao {
 				alumno.setCiclo(rs.getNString("ciclo"));
 				alumno.setCurso(rs.getString("curso"));
 				alumno.setGrupo(rs.getString("numeroGrupo"));
-				
-				// Tras construir el 'alumno' lo añadimos a la lista de resultados para devolverlo posteriormente:
+
+				// Tras construir el 'alumno' lo añadimos a la lista de resultados para
+				// devolverlo posteriormente:
 				result.add(alumno);
 			}
 

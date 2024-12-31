@@ -9,7 +9,7 @@ public interface AlumnoDao {
 
 	int add(Alumno alumno) throws SQLException;
 
-	Alumno getbyNia(int nia) throws SQLException;
+	Alumno getByNia(int nia) throws SQLException;
 
 	List<Alumno> getAll() throws SQLException;
 
