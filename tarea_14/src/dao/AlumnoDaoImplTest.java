@@ -167,5 +167,26 @@ public class AlumnoDaoImplTest {
 			fail("No se esperaba ninguna excepción.");
 		}
 	}
+	
+	@Test
+	void testDelete() {
+	    try {
+	        // Asegúrate de que el alumno con NIA 1 existe antes de eliminarlo
+	        Alumno alumno = alumnoDao.getByNia(1);
+	        assertNotNull(alumno, "El alumno con NIA 1 debe existir antes de eliminarlo.");
+
+	        // Llama al método delete
+	        alumnoDao.delete(1);
+
+	        // Verifica que el alumno ya no exista en la base de datos
+	        Alumno alumnoEliminado = alumnoDao.getByNia(1);
+	        assertEquals(null, alumnoEliminado, "El alumno con NIA 1 debe haberse eliminado.");
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        fail("No se esperaba ninguna excepción.");
+	    }
+	}
+
 
 }

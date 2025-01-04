@@ -160,7 +160,18 @@ public class AlumnoDaoImpl implements AlumnoDao {
 
 	@Override
 	public void delete(int nia) throws SQLException {
-		// TODO Auto-generated method stub
+
+		String sql = """
+				DELETE FROM alumnos
+				WHERE nia = ?
+				""";
+
+		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+			pstm.setInt(1, nia);
+
+			pstm.executeUpdate();
+
+		}
 
 	}
 
