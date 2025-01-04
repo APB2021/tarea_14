@@ -5,11 +5,15 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import menu.Menu;
 import pool.MyDataSource;
 
 public class App {
 
 	public static void main(String[] args) {
+
+		Menu menu = new Menu();
+		menu.init();
 
 		try (Connection conn = MyDataSource.getConnection()) {
 			DatabaseMetaData metaData = conn.getMetaData();
