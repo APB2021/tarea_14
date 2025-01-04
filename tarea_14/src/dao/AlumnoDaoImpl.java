@@ -149,7 +149,7 @@ public class AlumnoDaoImpl implements AlumnoDao {
 			pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
 			pstm.setString(5, alumno.getCiclo());
 			pstm.setString(6, alumno.getCurso());
-			 pstm.setInt(7, alumno.getNia());
+			pstm.setInt(7, alumno.getNia());
 
 			result = pstm.executeUpdate();
 
