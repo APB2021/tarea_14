@@ -34,10 +34,10 @@ public class Menu {
 
 			switch (opcion) {
 			case 1 -> listAll();
-			case 2 -> System.out.println("2");
+			case 2 -> listByNia();
 			case 3 -> insert();
-			case 4 -> System.out.println("4");
-			case 5 -> System.out.println("5");
+			case 4 -> update();
+			case 5 -> delete();
 			case 0 -> System.out.println("Saliendo del programa...");
 			default -> System.err.println("El número introducido no se corresponde con una operación válida.");
 			}
@@ -82,10 +82,76 @@ public class Menu {
 		try {
 			dao.add(new Alumno(nombre, apellidos, genero, fechaNacimiento, ciclo, curso));
 			System.out.println("Nuevo alumno registrado correctamente.");
-		} catch (SQLException e) {
+		} catch (SQLException ex) {
 			System.err.println(
 					"Error insertando el nuevo registro en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
-			e.printStackTrace();
+			ex.printStackTrace();
+		}
+
+	}
+
+	private void update() {
+
+		String mensaje = """
+				ACTUALIZACIÓN DE UN ALUMNO
+				==========================
+				""";
+
+		System.out.println(mensaje);
+
+		try {
+
+			int nia = pedirNia("Introduzca el nia del alumno a buscar: ");
+
+			Alumno alumno = dao.getByNia(nia);
+
+			if (alumno == null) {
+				System.out.println("No hay alumnos registrados en la base de datos con ese nia.");
+			} else {
+				printCabeceraTablaAlumnos();
+				printAlumno(alumno);
+
+				System.out.println();
+
+				String nombre = pedirDato("Nombre del alumno: ");
+				nombre = (nombre.isBlank()) ? alumno.getNombre() : nombre;
+
+				String apellidos = pedirDato("Apellidos del alumno: ");
+				apellidos = (apellidos.isBlank()) ? alumno.getApellidos() : apellidos;
+
+				char genero = pedirGenero("Género del alumno: ");
+				genero = (Character.toString(genero).isBlank()) ? alumno.getGenero() : genero;
+
+				LocalDate fechaNacimiento = pedirFechaNacimiento("Fecha de nacimiento en formato dd/mm/aaaa");
+				fechaNacimiento = (fechaNacimiento.toString().isBlank()) ? alumno.getFechaNacimiento()
+						: fechaNacimiento;
+
+				String ciclo = pedirDato("Ciclo del alumno: ");
+				ciclo = (ciclo.isBlank()) ? alumno.getCiclo() : ciclo;
+
+				String curso = pedirDato("Curso del alumno: ");
+				curso = (curso.isBlank()) ? alumno.getCurso() : curso;
+
+				alumno.setNombre(nombre);
+				alumno.setApellidos(apellidos);
+				alumno.setGenero(genero);
+				alumno.setFechaNacimiento(fechaNacimiento);
+				alumno.setCiclo(ciclo);
+				alumno.setCurso(curso);
+
+				dao.update(alumno);
+
+				System.out.println();
+
+				System.out.println("Alumno con nia " + alumno.getNia() + "actualizado.");
+
+				System.out.println();
+			}
+
+		} catch (SQLException ex) {
+			System.err.println(
+					"Error insertando el nuevo registro en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
+			ex.printStackTrace();
 		}
 
 	}
@@ -121,29 +187,92 @@ public class Menu {
 				printCabeceraTablaAlumnos();
 				result.forEach(this::printAlumno);
 			}
-		} catch (SQLException e) {
+		} catch (SQLException ex) {
 			System.err.println(
 					"Error conusltando en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
-			e.printStackTrace();
+			ex.printStackTrace();
 		}
 
 		System.out.println();
 	}
 
-	private String pedirDato(String mensaje) {
+	public void listByNia() {
+		String mensaje = """
+				BÚSQUEDA DE ALUMNOS POR NIA
+				===========================
+				""";
 		System.out.println(mensaje);
+
+		try {
+			int nia = pedirNia("Introduzca el nia del alumno a buscar: ");
+
+			Alumno alumno = dao.getByNia(nia);
+
+			if (alumno == null) {
+				System.out.println("No hay alumnos registrados en la base de datos con ese nia.");
+			} else {
+				printCabeceraTablaAlumnos();
+				printAlumno(alumno);
+			}
+
+			System.out.println();
+
+		} catch (SQLException ex) {
+			System.err.println(
+					"Error consultando en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
+			ex.printStackTrace();
+		}
+	}
+
+	public void delete() {
+		String mensaje = """
+				BORRADO DE UN ALUMNO
+				====================
+				""";
+		System.out.println(mensaje);
+
+		try {
+
+			int nia = pedirNia("Introduzca el nia del alumno a borrar: ");
+
+			System.out.printf("Está usted seguro de querer borrar al alumno con nia %s? (s/n)", nia);
+
+			String borrar = reader.nextLine();
+
+			if (borrar.equalsIgnoreCase("s")) {
+				dao.delete(nia);
+				System.out.printf("El alumno con nia %s ha sido eliminado.", nia);
+			}
+
+		} catch (SQLException ex) {
+			System.err.println(
+					"Error consultando en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
+			ex.printStackTrace();
+		}
+
+		System.out.println();
+	}
+
+	private int pedirNia(String mensaje) {
+		System.out.print(mensaje);
+		int respuesta = reader.nextInt();
+		return respuesta;
+	}
+
+	private String pedirDato(String mensaje) {
+		System.out.print(mensaje);
 		String respuesta = reader.nextLine();
 		return respuesta;
 	}
 
 	private char pedirGenero(String mensaje) {
-		System.out.println(mensaje);
+		System.out.print(mensaje);
 		char respuesta = reader.nextLine().charAt(0);
 		return respuesta;
 	}
 
 	private LocalDate pedirFechaNacimiento(String mensaje) {
-		System.out.println(mensaje);
+		System.out.print(mensaje);
 		LocalDate respuesta = reader.nextLocalDate();
 		return respuesta;
 	}
@@ -196,12 +325,9 @@ public class Menu {
 			} catch (IOException ex) {
 				System.err.print("Error leyendo del teclado.");
 				ex.printStackTrace();
-
 			}
 
 			return str;
 		}
-
 	}
-
 }
