@@ -13,7 +13,7 @@ public interface AlumnoDao {
 
 	List<Alumno> getAll() throws SQLException;
 
-	int update(int nia) throws SQLException;
+	int update(Alumno alumno) throws SQLException;
 
 	void delete(int nia) throws SQLException;
 

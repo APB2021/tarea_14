@@ -126,9 +126,36 @@ public class AlumnoDaoImpl implements AlumnoDao {
 	}
 
 	@Override
-	public int update(int nia) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+	public int update(Alumno alumno) throws SQLException {
+
+		String sql = """
+					UPDATE alumnos SET
+						nombre = ?,
+						apellidos = ?,
+						genero = ?,
+						fechaNacimiento = ?,
+						ciclo  = ?,
+						curso = ?
+					WHERE nia = ?
+				""";
+
+		int result;
+
+		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+
+			pstm.setString(1, alumno.getNombre());
+			pstm.setString(2, alumno.getApellidos());
+			pstm.setString(3, String.valueOf(alumno.getGenero()));
+			pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
+			pstm.setString(5, alumno.getCiclo());
+			pstm.setString(6, alumno.getCurso());
+			 pstm.setInt(7, alumno.getNia());
+
+			result = pstm.executeUpdate();
+
+		}
+
+		return result;
 	}
 
 	@Override

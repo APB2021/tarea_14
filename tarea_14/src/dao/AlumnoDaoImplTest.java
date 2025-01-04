@@ -105,30 +105,67 @@ public class AlumnoDaoImplTest {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Test
 	void testGetByNia() {
-	    try {
-	        // Busca un alumno con un NIA conocido.
-	        Alumno alumno = alumnoDao.getByNia(1);
+		try {
+			// Busca un alumno con un NIA conocido.
+			Alumno alumno = alumnoDao.getByNia(1);
 
-	        // Comprueba que no sea nulo.
-	        assertNotNull(alumno, "El alumno con NIA 1 no debe ser nulo.");
+			// Comprueba que no sea nulo.
+			assertNotNull(alumno, "El alumno con NIA 1 no debe ser nulo.");
 
-	        // Verifica que los datos coincidan.
-	        assertEquals(1, alumno.getNia(), "El NIA del alumno debe ser 1.");
-	        assertEquals("MARÍA", alumno.getNombre(), "El nombre del alumno debe ser MARÍA.");
-	        assertEquals("OLALLA GARCÍA", alumno.getApellidos(), "Los apellidos deben ser OLALLA GARCÍA.");
-	        assertEquals('F', alumno.getGenero(), "El género debe ser F.");
-	        assertEquals(1979, alumno.getFechaNacimiento().getYear(), "El año de nacimiento debe ser 1979.");
-	        assertEquals("PEDAGOGÍA TERAPEUTICA", alumno.getCiclo(),
+			// Verifica que los datos coincidan.
+			assertEquals(1, alumno.getNia(), "El NIA del alumno debe ser 1.");
+			assertEquals("MARÍA", alumno.getNombre(), "El nombre del alumno debe ser MARÍA.");
+			assertEquals("OLALLA GARCÍA", alumno.getApellidos(), "Los apellidos deben ser OLALLA GARCÍA.");
+			assertEquals('F', alumno.getGenero(), "El género debe ser F.");
+			assertEquals(1979, alumno.getFechaNacimiento().getYear(), "El año de nacimiento debe ser 1979.");
+			assertEquals("PEDAGOGÍA TERAPEUTICA", alumno.getCiclo(),
 					"El ciclo de MARÍA debe ser PEDAGOGÍA TERAPEUTICA");
 			assertEquals("2º", alumno.getCurso(), "El curso de MARÍA debe ser 2º");
 
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        fail("No se esperaba ninguna excepción.");
-	    }
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("No se esperaba ninguna excepción.");
+		}
+	}
+
+	@Test
+	void testUpdate() {
+		try {
+			// Busca un alumno existente para actualizar
+			Alumno alumno = alumnoDao.getByNia(1);
+
+			// Asegúrate de que el alumno exista
+			assertNotNull(alumno, "El alumno con NIA 1 debe existir antes de actualizarlo.");
+
+			// Modifica algunos campos del alumno
+			alumno.setNombre("María Actualizada");
+			alumno.setApellidos("Olalla García Actualizada");
+			alumno.setCiclo("Nuevo Ciclo");
+			alumno.setCurso("3º");
+
+			// Llama al método update
+			int filasActualizadas = alumnoDao.update(alumno);
+
+			// Verifica que se haya actualizado una fila
+			assertEquals(1, filasActualizadas, "Debe actualizar exactamente una fila.");
+
+			// Vuelve a obtener el alumno para verificar los cambios
+			Alumno alumnoActualizado = alumnoDao.getByNia(1);
+
+			// Verifica que los cambios se hayan aplicado correctamente
+			assertEquals("María Actualizada", alumnoActualizado.getNombre(), "El nombre debe haberse actualizado.");
+			assertEquals("Olalla García Actualizada", alumnoActualizado.getApellidos(),
+					"Los apellidos deben haberse actualizado.");
+			assertEquals("Nuevo Ciclo", alumnoActualizado.getCiclo(), "El ciclo debe haberse actualizado.");
+			assertEquals("3º", alumnoActualizado.getCurso(), "El curso debe haberse actualizado.");
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			fail("No se esperaba ninguna excepción.");
+		}
 	}
 
 }
