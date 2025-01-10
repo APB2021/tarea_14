@@ -3,7 +3,6 @@ package menu;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -12,6 +11,7 @@ import java.util.stream.IntStream;
 
 import dao.AlumnoDao;
 import dao.AlumnoDaoImpl;
+import dao.DataAccessException;
 import model.Alumno;
 
 public class Menu {
@@ -82,7 +82,7 @@ public class Menu {
 		try {
 			dao.add(new Alumno(nombre, apellidos, genero, fechaNacimiento, ciclo, curso));
 			System.out.println("Nuevo alumno registrado correctamente.");
-		} catch (SQLException ex) {
+		} catch (DataAccessException ex) {
 			System.err.println(
 					"Error insertando el nuevo registro en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
 			ex.printStackTrace();
@@ -148,7 +148,7 @@ public class Menu {
 				System.out.println();
 			}
 
-		} catch (SQLException ex) {
+		} catch (DataAccessException ex) {
 			System.err.println(
 					"Error insertando el nuevo registro en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
 			ex.printStackTrace();
@@ -157,17 +157,14 @@ public class Menu {
 	}
 
 	private void printCabeceraTablaAlumnos() {
-		//System.out.printf("%3s %15s %25s %1s %8s %10s %10s %10s", "NIA", "NOMBRE", "APELLIDOS", "GÉNERO",
-		System.out.printf("%-10s %-15s %-20s %-6s %-15s %-21s %-10s %-10s%n", "NIA", "NOMBRE", "APELLIDOS", "GÉNERO",
+		System.out.printf("%-5s %-15s %-20s %-10s %-15s %-50s %-10s %-10s%n", "NIA", "NOMBRE", "APELLIDOS", "GÉNERO",
 				"NACIMIENTO", "CICLO", "CURSO", "GRUPO");
-		System.out.println();
-		IntStream.range(1, 110).forEach(x -> System.out.print("-"));
+		IntStream.range(1, 140).forEach(_ -> System.out.print("="));
 		System.out.println();
 	}
 
 	private void printAlumno(Alumno alumno) {
-		//System.out.printf("%3s %15s %25s %1s %9s %10s %10s %10s \n", alumno.getNia(), alumno.getNombre(),
-		System.out.printf("%-10s %-15s %-20s %-6s %-15s %-21s %-10s %-10s%n", alumno.getNia(), alumno.getNombre(),
+		System.out.printf("%-5s %-15s %-20s %-10s %-15s %-50s %-10s %-10s%n", alumno.getNia(), alumno.getNombre(),
 				alumno.getApellidos(), alumno.getGenero(),
 				alumno.getFechaNacimiento().format(DateTimeFormatter.ofPattern("dd/MM/yy")), alumno.getCiclo(),
 				alumno.getCurso(), alumno.getGrupo());
@@ -189,7 +186,7 @@ public class Menu {
 				printCabeceraTablaAlumnos();
 				result.forEach(this::printAlumno);
 			}
-		} catch (SQLException ex) {
+		} catch (DataAccessException ex) {
 			System.err.println(
 					"Error conusltando en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
 			ex.printStackTrace();
@@ -219,7 +216,7 @@ public class Menu {
 
 			System.out.println();
 
-		} catch (SQLException ex) {
+		} catch (DataAccessException ex) {
 			System.err.println(
 					"Error consultando en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
 			ex.printStackTrace();
@@ -246,7 +243,7 @@ public class Menu {
 				System.out.printf("El alumno con nia %s ha sido eliminado.", nia);
 			}
 
-		} catch (SQLException ex) {
+		} catch (DataAccessException ex) {
 			System.err.println(
 					"Error consultando en la base de datos. Vuelva a intentarlo de nuevo o póngase en contacto con el administrador.");
 			ex.printStackTrace();

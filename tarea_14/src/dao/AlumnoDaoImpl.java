@@ -4,175 +4,155 @@ import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import model.Alumno;
 import pool.MyDataSource;
 
+/**
+ * Implementación de la interfaz AlumnoDao utilizando JDBC.
+ */
 public class AlumnoDaoImpl implements AlumnoDao {
 
-	private static AlumnoDaoImpl instance;
+    private static AlumnoDaoImpl instance;
 
-	static {
-		instance = new AlumnoDaoImpl();
-	}
+    static {
+        instance = new AlumnoDaoImpl();
+    }
 
-	private AlumnoDaoImpl() {
-	}
+    private AlumnoDaoImpl() {
+    }
 
-	public static AlumnoDaoImpl getInstance() {
-		return instance;
-	}
+    public static AlumnoDaoImpl getInstance() {
+        return instance;
+    }
 
-	@Override
-	public int add(Alumno alumno) throws SQLException {
+    @Override
+    public int add(Alumno alumno) {
+        String sql = """
+                INSERT INTO alumnos (nombre, apellidos, genero, fechaNacimiento, ciclo, curso)
+                VALUES (?,?,?,?,?,?);
+                """;
 
-		String sql = """
-							INSERT INTO alumnos (nombre, apellidos, genero, fechaNacimiento, ciclo, curso)
-							VALUES (?,?,?,?,?,?);
-				""";
+        try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+            pstm.setString(1, alumno.getNombre());
+            pstm.setString(2, alumno.getApellidos());
+            pstm.setString(3, String.valueOf(alumno.getGenero()));
+            pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
+            pstm.setString(5, alumno.getCiclo());
+            pstm.setString(6, alumno.getCurso());
+            return pstm.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException("Error al agregar el alumno: " + alumno, e);
+        }
+    }
 
-		int result = -14;
+    @Override
+    public Alumno getByNia(int nia) {
+        String sql = """
+                SELECT nia, nombre, apellidos, genero, fechaNacimiento, ciclo, curso, numeroGrupo
+                FROM alumnos
+                WHERE nia = ?;
+                """;
 
-		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+        try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+            pstm.setInt(1, nia);
 
-			// Para JDBC los índices comienzan en "1":
-			pstm.setString(1, alumno.getNombre());
-			pstm.setString(2, alumno.getApellidos());
-			pstm.setString(3, String.valueOf(alumno.getGenero()));
-			pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
-			pstm.setString(5, alumno.getCiclo());
-			pstm.setString(6, alumno.getCurso());
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToAlumno(rs);
+                }
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error al obtener el alumno con NIA: " + nia, e);
+        }
 
-			result = pstm.executeUpdate();
+        return null;
+    }
 
-		} catch (Exception e) {
+    @Override
+    public List<Alumno> getAll() {
+        String sql = """
+                SELECT nia, nombre, apellidos, genero, fechaNacimiento, ciclo, curso, numeroGrupo
+                FROM alumnos;
+                """;
 
-		}
+        List<Alumno> result = new ArrayList<>();
+        try (Connection conn = MyDataSource.getConnection();
+             PreparedStatement pstm = conn.prepareStatement(sql);
+             ResultSet rs = pstm.executeQuery()) {
 
-		return result;
-	}
+            while (rs.next()) {
+                result.add(mapResultSetToAlumno(rs));
+            }
+        } catch (Exception e) {
+            throw new DataAccessException("Error al obtener la lista de alumnos.", e);
+        }
 
-	@Override
-	public Alumno getByNia(int nia) throws SQLException {
+        return result;
+    }
 
-		Alumno result = null;
+    @Override
+    public int update(Alumno alumno) {
+        String sql = """
+                UPDATE alumnos SET
+                    nombre = ?,
+                    apellidos = ?,
+                    genero = ?,
+                    fechaNacimiento = ?,
+                    ciclo  = ?,
+                    curso = ?
+                WHERE nia = ?;
+                """;
 
-		String sql = """
-				SELECT nia, nombre, apellidos, genero, fechaNacimiento, ciclo, curso, numeroGrupo
-				FROM alumnos
-				WHERE nia = ?;
-				""";
+        try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+            pstm.setString(1, alumno.getNombre());
+            pstm.setString(2, alumno.getApellidos());
+            pstm.setString(3, String.valueOf(alumno.getGenero()));
+            pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
+            pstm.setString(5, alumno.getCiclo());
+            pstm.setString(6, alumno.getCurso());
+            pstm.setInt(7, alumno.getNia());
 
-		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+            return pstm.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException("Error al actualizar el alumno: " + alumno, e);
+        }
+    }
 
-			pstm.setInt(1, nia);
+    @Override
+    public void delete(int nia) {
+        String sql = """
+                DELETE FROM alumnos
+                WHERE nia = ?;
+                """;
 
-			try (ResultSet rs = pstm.executeQuery()) {
-				if (rs.next()) { // Solo esperamos un registro, así que usamos `if` en lugar de `while`.
-					result = new Alumno();
-					result.setNia(rs.getInt("nia"));
-					result.setNombre(rs.getString("nombre"));
-					result.setApellidos(rs.getString("apellidos"));
-					result.setGenero(rs.getString("genero").charAt(0));
-					result.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
-					result.setCiclo(rs.getString("ciclo"));
-					result.setCurso(rs.getString("curso"));
-					result.setGrupo(rs.getString("numeroGrupo"));
-				}
-			}
-		}
+        try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
+            pstm.setInt(1, nia);
+            pstm.executeUpdate();
+        } catch (Exception e) {
+            throw new DataAccessException("Error al eliminar el alumno con NIA: " + nia, e);
+        }
+    }
 
-		return result;
-	}
-
-	@Override
-	public List<Alumno> getAll() throws SQLException {
-
-		String sql = """
-				SELECT nia, nombre, apellidos, genero, fechaNacimiento, ciclo, curso, numeroGrupo
-				FROM alumnos;
-				""";
-
-		List<Alumno> result = new ArrayList<>();
-
-		try (Connection conn = MyDataSource.getConnection();
-				PreparedStatement pstm = conn.prepareStatement(sql);
-				ResultSet rs = pstm.executeQuery()) {
-
-			Alumno alumno;
-
-			while (rs.next()) {
-				alumno = new Alumno();
-				alumno.setNia(rs.getInt("nia"));
-				alumno.setNombre(rs.getString("nombre"));
-				alumno.setApellidos(rs.getString("apellidos"));
-				alumno.setGenero(Character.valueOf(rs.getString("genero").charAt(0)));
-				alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
-				alumno.setCiclo(rs.getNString("ciclo"));
-				alumno.setCurso(rs.getString("curso"));
-				alumno.setGrupo(rs.getString("numeroGrupo"));
-
-				// Tras construir el 'alumno' lo añadimos a la lista de resultados para
-				// devolverlo posteriormente:
-				result.add(alumno);
-			}
-
-		}
-
-		return result;
-	}
-
-	@Override
-	public int update(Alumno alumno) throws SQLException {
-
-		String sql = """
-					UPDATE alumnos SET
-						nombre = ?,
-						apellidos = ?,
-						genero = ?,
-						fechaNacimiento = ?,
-						ciclo  = ?,
-						curso = ?
-					WHERE nia = ?
-				""";
-
-		int result;
-
-		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
-
-			pstm.setString(1, alumno.getNombre());
-			pstm.setString(2, alumno.getApellidos());
-			pstm.setString(3, String.valueOf(alumno.getGenero()));
-			pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
-			pstm.setString(5, alumno.getCiclo());
-			pstm.setString(6, alumno.getCurso());
-			pstm.setInt(7, alumno.getNia());
-
-			result = pstm.executeUpdate();
-
-		}
-
-		return result;
-	}
-
-	@Override
-	public void delete(int nia) throws SQLException {
-
-		String sql = """
-				DELETE FROM alumnos
-				WHERE nia = ?
-				""";
-
-		try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
-			pstm.setInt(1, nia);
-
-			pstm.executeUpdate();
-
-		}
-
-	}
-
+    /**
+     * Método auxiliar para mapear un ResultSet a un objeto Alumno.
+     *
+     * @param rs el ResultSet obtenido de la consulta
+     * @return un objeto Alumno con los datos del ResultSet
+     * @throws Exception si ocurre un error al mapear los datos
+     */
+    private Alumno mapResultSetToAlumno(ResultSet rs) throws Exception {
+        Alumno alumno = new Alumno();
+        alumno.setNia(rs.getInt("nia"));
+        alumno.setNombre(rs.getString("nombre"));
+        alumno.setApellidos(rs.getString("apellidos"));
+        alumno.setGenero(rs.getString("genero").charAt(0));
+        alumno.setFechaNacimiento(rs.getDate("fechaNacimiento").toLocalDate());
+        alumno.setCiclo(rs.getString("ciclo"));
+        alumno.setCurso(rs.getString("curso"));
+        alumno.setGrupo(rs.getString("numeroGrupo"));
+        return alumno;
+    }
 }
