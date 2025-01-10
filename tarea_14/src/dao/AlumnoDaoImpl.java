@@ -36,11 +36,11 @@ public class AlumnoDaoImpl implements AlumnoDao {
                 """;
 
         try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
-            pstm.setString(1, alumno.getNombre());
-            pstm.setString(2, alumno.getApellidos());
-            pstm.setString(3, String.valueOf(alumno.getGenero()));
+            pstm.setString(1, alumno.getNombre().toUpperCase());
+            pstm.setString(2, alumno.getApellidos().toUpperCase());
+            pstm.setString(3, String.valueOf(alumno.getGenero()).toUpperCase());
             pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
-            pstm.setString(5, alumno.getCiclo());
+            pstm.setString(5, alumno.getCiclo().toUpperCase());
             pstm.setString(6, alumno.getCurso());
             return pstm.executeUpdate();
         } catch (Exception e) {
@@ -107,11 +107,11 @@ public class AlumnoDaoImpl implements AlumnoDao {
                 """;
 
         try (Connection conn = MyDataSource.getConnection(); PreparedStatement pstm = conn.prepareStatement(sql)) {
-            pstm.setString(1, alumno.getNombre());
-            pstm.setString(2, alumno.getApellidos());
-            pstm.setString(3, String.valueOf(alumno.getGenero()));
+            pstm.setString(1, alumno.getNombre().toUpperCase());
+            pstm.setString(2, alumno.getApellidos().toUpperCase());
+            pstm.setString(3, String.valueOf(alumno.getGenero()).toUpperCase());
             pstm.setDate(4, Date.valueOf(alumno.getFechaNacimiento()));
-            pstm.setString(5, alumno.getCiclo());
+            pstm.setString(5, alumno.getCiclo().toUpperCase());
             pstm.setString(6, alumno.getCurso());
             pstm.setInt(7, alumno.getNia());
 

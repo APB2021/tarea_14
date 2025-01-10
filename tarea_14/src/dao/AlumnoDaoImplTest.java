@@ -64,12 +64,12 @@ public class AlumnoDaoImplTest {
 	void testAdd() {
 		// Crea un objeto Alumno para insertar
 		Alumno alumno = new Alumno();
-		alumno.setNombre("Alberto");
-		alumno.setApellidos("Polo Bardera");
+		alumno.setNombre("ALBERTO");
+		alumno.setApellidos("POLO BARDERA");
 		alumno.setGenero('M');
 		alumno.setFechaNacimiento(LocalDate.of(1973, 3, 17));
 		alumno.setCiclo("DAM");
-		alumno.setCurso("2");
+		alumno.setCurso("2º");
 
 		try {
 			// Llamamos al método add y verificamos el resultado
@@ -156,10 +156,10 @@ public class AlumnoDaoImplTest {
 			Alumno alumnoActualizado = alumnoDao.getByNia(1);
 
 			// Verifica que los cambios se hayan aplicado correctamente
-			assertEquals("María Actualizada", alumnoActualizado.getNombre(), "El nombre debe haberse actualizado.");
-			assertEquals("Olalla García Actualizada", alumnoActualizado.getApellidos(),
+			assertEquals("MARÍA ACTUALIZADA", alumnoActualizado.getNombre(), "El nombre debe haberse actualizado.");
+			assertEquals("OLALLA GARCÍA ACTUALIZADA", alumnoActualizado.getApellidos(),
 					"Los apellidos deben haberse actualizado.");
-			assertEquals("Nuevo Ciclo", alumnoActualizado.getCiclo(), "El ciclo debe haberse actualizado.");
+			assertEquals("NUEVO CICLO", alumnoActualizado.getCiclo(), "El ciclo debe haberse actualizado.");
 			assertEquals("3º", alumnoActualizado.getCurso(), "El curso debe haberse actualizado.");
 
 		} catch (Exception e) {
