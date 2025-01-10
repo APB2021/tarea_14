@@ -38,7 +38,7 @@ public class Menu {
 			case 3 -> insert();
 			case 4 -> update();
 			case 5 -> delete();
-			case 0 -> System.out.println("Saliendo del programa...");
+			case 0 -> System.out.println("Saliendo del Sistema de Gestión de Alumnos...");
 			default -> System.err.println("El número introducido no se corresponde con una operación válida.");
 			}
 		} while (opcion != 0);
