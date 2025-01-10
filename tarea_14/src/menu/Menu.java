@@ -157,15 +157,17 @@ public class Menu {
 	}
 
 	private void printCabeceraTablaAlumnos() {
-		System.out.printf("%3s %15s %25s %1s %8s %10s %10s %10s", "NIA", "NOMBRE", "APELLIDOS", "GÉNERO",
-				"FECHA DE NACIMIENTO", "CICLO", "CURSO", "GRUPO");
+		//System.out.printf("%3s %15s %25s %1s %8s %10s %10s %10s", "NIA", "NOMBRE", "APELLIDOS", "GÉNERO",
+		System.out.printf("%-10s %-15s %-20s %-6s %-15s %-21s %-10s %-10s%n", "NIA", "NOMBRE", "APELLIDOS", "GÉNERO",
+				"NACIMIENTO", "CICLO", "CURSO", "GRUPO");
 		System.out.println();
 		IntStream.range(1, 110).forEach(x -> System.out.print("-"));
 		System.out.println();
 	}
 
 	private void printAlumno(Alumno alumno) {
-		System.out.printf("%3s %15s %25s %1s %9s %10s %10s %10s \n", alumno.getNia(), alumno.getNombre(),
+		//System.out.printf("%3s %15s %25s %1s %9s %10s %10s %10s \n", alumno.getNia(), alumno.getNombre(),
+		System.out.printf("%-10s %-15s %-20s %-6s %-15s %-21s %-10s %-10s%n", alumno.getNia(), alumno.getNombre(),
 				alumno.getApellidos(), alumno.getGenero(),
 				alumno.getFechaNacimiento().format(DateTimeFormatter.ofPattern("dd/MM/yy")), alumno.getCiclo(),
 				alumno.getCurso(), alumno.getGrupo());
