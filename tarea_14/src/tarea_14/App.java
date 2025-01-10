@@ -20,13 +20,13 @@ public class App {
 			String[] types = { "TABLE" };
 			ResultSet tables = metaData.getTables(null, null, "%", types);
 			while (tables.next()) {
-				System.out.println(tables.getString("TABLE_NAME"));
-			}
+				// Línea comentada una vez probada la conexión para que no aparezcan los nombres
+				// de las tablas por consola.
 
+				// System.out.println(tables.getString("TABLE_NAME"));
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
 	}
-
 }
